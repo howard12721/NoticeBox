@@ -1,4 +1,4 @@
-name: SimplePluginTemplate
+name: NoticeBox
 version: '${version}'
-main: jp.xhw.howatemplate.HowaTemplate
-api-version: 1.19
+main: jp.xhw.noticebox.NoticeBoxPlugin
+api-version: 1.20
