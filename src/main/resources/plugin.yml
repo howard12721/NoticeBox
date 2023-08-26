@@ -1,0 +1,4 @@
+name: SimplePluginTemplate
+version: '${version}'
+main: jp.xhw.howatemplate.HowaTemplate
+api-version: 1.19
