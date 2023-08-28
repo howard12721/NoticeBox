@@ -2,6 +2,7 @@ package jp.xhw.noticebox.presenter.command
 
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.arguments.PlayerArgument
+import dev.jorel.commandapi.executors.CommandExecutor
 import dev.jorel.commandapi.executors.PlayerCommandExecutor
 import jp.xhw.noticebox.NoticeBoxPlugin
 import jp.xhw.noticebox.presenter.gui.BoxMenu
@@ -48,6 +49,12 @@ class Command {
                             if (!sender.hasPermission("noticebox.open-other")) return@PlayerCommandExecutor
                             target = args.get(0) as Player
                         }
+                        BoxMenu.create(NoticeBoxPlugin.plugin, "お知らせ", target).show(target)
+                    })
+                    .executes(CommandExecutor { sender, args ->
+                        if (args.count() == 0) return@CommandExecutor
+                        if (!sender.hasPermission("noticebox.open-other")) return@CommandExecutor
+                        val target = args.get(0) as Player
                         BoxMenu.create(NoticeBoxPlugin.plugin, "お知らせ", target).show(target)
                     })
                     .withPermission("noticebox.open")
