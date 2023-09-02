@@ -4,7 +4,7 @@ import de.themoep.inventorygui.*
 import jp.xhw.noticebox.NoticeBoxPlugin
 import jp.xhw.noticebox.application.dto.AnnounceSampleDto
 import jp.xhw.noticebox.application.service.FetchAnnounceSamplesService
-import jp.xhw.noticebox.application.service.GetNumberOfAnnounceService
+import jp.xhw.noticebox.application.service.GetNumberOfAnnouncesService
 import jp.xhw.noticebox.presenter.shared.Constants
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -196,7 +196,7 @@ class DeleteAnnounceMenu private constructor(plugin: NoticeBoxPlugin, menuTitle:
             ANNOUNCES_PER_PAGE * (currentPage - 1),
             ANNOUNCES_PER_PAGE
         )
-        numOfAnnounces = GetNumberOfAnnounceService(NoticeBoxPlugin.plugin.announceRepository).get()
+        numOfAnnounces = GetNumberOfAnnouncesService(NoticeBoxPlugin.plugin.announceRepository).get()
         maxPage = if (numOfAnnounces == 0L) 1L else (numOfAnnounces + ANNOUNCES_PER_PAGE - 1) / ANNOUNCES_PER_PAGE
 
         menu.title = "ページ: $currentPage"

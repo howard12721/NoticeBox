@@ -5,7 +5,7 @@ import jp.xhw.noticebox.domain.model.UserId
 
 interface UserRepository {
 
-    fun find(userId: UserId): User
+    fun find(userId: UserId): User?
     fun save(user: User)
 
 }
