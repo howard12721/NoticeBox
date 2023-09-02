@@ -7,6 +7,7 @@ import jp.xhw.noticebox.infrastructure.dao.Announces
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.statements.api.ExposedBlob
+import java.time.LocalDateTime
 import jp.xhw.noticebox.infrastructure.dao.Announce as AnnounceDao
 import jp.xhw.noticebox.infrastructure.dao.AnnounceReward as AnnounceRewardDao
 
@@ -22,6 +23,15 @@ class AnnounceSqliteRepository : AnnounceRepository {
             getReward(announceId),
             announce.createdAt
         )
+    }
+
+    override fun findPagedAnnounceSamples(offset: Long, limit: Int, after: LocalDateTime): List<AnnounceSample> {
+        val announces = Announces
+            .slice(Announces.id, Announces.title, Announces.createdAt)
+            .select { Announces.createdAt greater after }
+            .orderBy(Announces.createdAt, SortOrder.DESC)
+            .limit(limit, offset = offset)
+        return announces.map(this::convertToAnnounceSample).toList()
     }
 
     override fun findPagedAnnounceSamples(offset: Long, limit: Int): List<AnnounceSample> {
@@ -78,6 +88,10 @@ class AnnounceSqliteRepository : AnnounceRepository {
 
     override fun count(): Long {
         return AnnounceDao.count()
+    }
+
+    override fun count(after: LocalDateTime): Long {
+        return Announces.select { Announces.createdAt greater after }.count()
     }
 
     private fun convertToAnnounceSample(resultRow: ResultRow): AnnounceSample {

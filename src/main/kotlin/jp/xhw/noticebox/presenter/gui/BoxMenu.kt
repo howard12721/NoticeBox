@@ -3,6 +3,7 @@ package jp.xhw.noticebox.presenter.gui
 import de.themoep.inventorygui.*
 import jp.xhw.noticebox.NoticeBoxPlugin
 import jp.xhw.noticebox.application.dto.AnnounceSampleDto
+import jp.xhw.noticebox.application.exception.UserNotFoundException
 import jp.xhw.noticebox.application.service.*
 import jp.xhw.noticebox.presenter.shared.Constants
 import org.bukkit.Material
@@ -185,34 +186,40 @@ class BoxMenu private constructor(plugin: NoticeBoxPlugin, menuTitle: String, pr
                 if (readAnnounces.contains(sample.announceId)) ItemStack(Material.BOOK) else createBrokenWrittenBook(),
                 { _ ->
                     player.openBook(createBook(sample))
-                    val claimedReward = UserOpenAnnounceService(
-                        NoticeBoxPlugin.plugin.userRepository,
-                        NoticeBoxPlugin.plugin.announceRepository,
-                        NoticeBoxPlugin.economy,
-                        NoticeBoxPlugin.itemClaimLogic
-                    ).open(player.uniqueId, sample.announceId)
-                    claimedReward?.let {
-                        if (claimedReward.money > 0.0 || claimedReward.items.isNotEmpty()) {
-                            val messages = mutableListOf<String>()
+                    try {
+                        val claimedReward = UserOpenAnnounceService(
+                            NoticeBoxPlugin.plugin.userRepository,
+                            NoticeBoxPlugin.plugin.announceRepository,
+                            NoticeBoxPlugin.economy,
+                            NoticeBoxPlugin.itemClaimLogic
+                        ).open(player.uniqueId, sample.announceId)
+                        claimedReward?.let {
+                            if (claimedReward.money > 0.0 || claimedReward.items.isNotEmpty()) {
+                                val messages = mutableListOf<String>()
 
-                            messages.add(Constants.MESSAGE_SEPARATOR)
-                            messages.add("")
-                            if (claimedReward.money > 0.0) messages.add("お金 §6%d§r".format(claimedReward.money))
-                            if (claimedReward.items.isNotEmpty()) messages.add("アイテム §a%d§r個".format(claimedReward.items.size))
-                            messages.add("")
-                            messages.add(Constants.MESSAGE_SEPARATOR)
+                                messages.add(Constants.MESSAGE_SEPARATOR)
+                                messages.add("")
+                                if (claimedReward.money > 0.0) messages.add("お金 §6%d§r".format(claimedReward.money))
+                                if (claimedReward.items.isNotEmpty()) messages.add("アイテム §a%d§r個".format(claimedReward.items.size))
+                                messages.add("")
+                                messages.add(Constants.MESSAGE_SEPARATOR)
 
-                            for (message in messages) {
-                                player.sendMessage(message)
+                                for (message in messages) {
+                                    player.sendMessage(message)
+                                }
                             }
-                        }
 
-                        player.playSound(
-                            player,
-                            Sound.ENTITY_PLAYER_LEVELUP,
-                            1.0f,
-                            1.0f
-                        )
+                            player.playSound(
+                                player,
+                                Sound.ENTITY_PLAYER_LEVELUP,
+                                1.0f,
+                                1.0f
+                            )
+                        }
+                    } catch (e: UserNotFoundException) {
+                        this.menu.close()
+                        this.menu.destroy()
+                        player.sendMessage("§c報酬の受け取り中にエラーが発生しました: ユーザーが見つかりませんでした")
                     }
                     true
                 },
@@ -236,15 +243,32 @@ class BoxMenu private constructor(plugin: NoticeBoxPlugin, menuTitle: String, pr
     }
 
     private fun update() {
-        currentSamples = FetchAnnounceSamplesService(NoticeBoxPlugin.plugin.announceRepository).fetch(
-            ANNOUNCES_PER_PAGE * (currentPage - 1),
-            ANNOUNCES_PER_PAGE
-        )
-        numOfAnnounces = GetNumberOfAnnounceService(NoticeBoxPlugin.plugin.announceRepository).get()
-        maxPage = if (numOfAnnounces == 0L) 1L else (numOfAnnounces + ANNOUNCES_PER_PAGE - 1) / ANNOUNCES_PER_PAGE
-        readAnnounces = FetchReadAnnouncesService(NoticeBoxPlugin.plugin.userRepository).fetch(player.uniqueId)
+        try {
+            if (player.hasPermission("noticebox.viewall")) {
+                currentSamples = FetchAnnounceSamplesService(NoticeBoxPlugin.plugin.announceRepository).fetch(
+                    ANNOUNCES_PER_PAGE * (currentPage - 1),
+                    ANNOUNCES_PER_PAGE
+                )
 
-        menu.title = "ページ: $currentPage"
+                numOfAnnounces = GetNumberOfAnnouncesService(NoticeBoxPlugin.plugin.announceRepository).get()
+            } else {
+                currentSamples = FetchUserAnnounceSamplesService(NoticeBoxPlugin.plugin.announceRepository, NoticeBoxPlugin.plugin.userRepository).fetch(
+                    player.uniqueId,
+                    ANNOUNCES_PER_PAGE * (currentPage - 1),
+                    ANNOUNCES_PER_PAGE
+                )
+
+                numOfAnnounces = GetNumberOfUserAnnouncesService(NoticeBoxPlugin.plugin.announceRepository, NoticeBoxPlugin.plugin.userRepository).get(player.uniqueId)
+            }
+            maxPage = if (numOfAnnounces == 0L) 1L else (numOfAnnounces + ANNOUNCES_PER_PAGE - 1) / ANNOUNCES_PER_PAGE
+            readAnnounces = FetchReadAnnouncesService(NoticeBoxPlugin.plugin.userRepository).fetch(player.uniqueId)
+
+            menu.title = "ページ: $currentPage"
+        } catch (e: UserNotFoundException) {
+            this.menu.close()
+            this.menu.destroy()
+            player.sendMessage("§cお知らせの読み込み中にエラーが発生しました: ユーザーが見つかりませんでした")
+        }
     }
 
     private fun createBrokenWrittenBook(): ItemStack {

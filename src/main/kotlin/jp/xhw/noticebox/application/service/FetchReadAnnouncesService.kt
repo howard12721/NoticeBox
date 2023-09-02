@@ -1,5 +1,6 @@
 package jp.xhw.noticebox.application.service
 
+import jp.xhw.noticebox.application.exception.UserNotFoundException
 import jp.xhw.noticebox.domain.model.AnnounceId
 import jp.xhw.noticebox.domain.model.UserId
 import jp.xhw.noticebox.domain.repository.UserRepository
@@ -10,7 +11,7 @@ class FetchReadAnnouncesService(private val userRepository: UserRepository) {
 
     fun fetch(userId: UUID): List<UUID> {
         return transaction {
-            userRepository.find(UserId(userId)).openedAnnounceIds.map(AnnounceId::value)
+            userRepository.find(UserId(userId))?.openedAnnounceIds?.map(AnnounceId::value)?: throw UserNotFoundException(userId)
         }
     }
 
