@@ -8,14 +8,13 @@ import jp.xhw.noticebox.infrastructure.dao.AnnounceOpens
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.batchInsert
 import org.jetbrains.exposed.sql.deleteWhere
-import java.time.LocalDateTime
 import jp.xhw.noticebox.infrastructure.dao.AnnounceOpen as AnnounceOpensDao
 import jp.xhw.noticebox.infrastructure.dao.User as UserDao
 
 class UserSqliteRepository : UserRepository {
 
     override fun find(userId: UserId): User? {
-        val user = UserDao.findById(userId.value)?: return null
+        val user = UserDao.findById(userId.value) ?: return null
         val openedAnnounces = mutableListOf<AnnounceId>()
         AnnounceOpensDao
             .find { AnnounceOpens.userId eq userId.value }

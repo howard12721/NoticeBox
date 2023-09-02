@@ -6,7 +6,6 @@ import jp.xhw.noticebox.infrastructure.dao.AnnounceRewards
 import jp.xhw.noticebox.infrastructure.dao.Announces
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.greater
 import org.jetbrains.exposed.sql.statements.api.ExposedBlob
 import java.time.LocalDateTime
 import jp.xhw.noticebox.infrastructure.dao.Announce as AnnounceDao
