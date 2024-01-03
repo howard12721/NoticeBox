@@ -42,9 +42,9 @@ dependencies {
     implementation "org.jetbrains.exposed:exposed-java-time:0.40.1"
 
     compileOnly "com.github.MilkBowl:VaultAPI:1.7"
-    implementation "dev.jorel:commandapi-bukkit-shade:9.1.0"
+    implementation "dev.jorel:commandapi-bukkit-shade:9.3.0"
     implementation "de.themoep:inventorygui:1.6.1-SNAPSHOT"
-    implementation "net.wesjd:anvilgui:1.7.0-SNAPSHOT"
+    implementation "net.wesjd:anvilgui:1.9.2-SNAPSHOT"
 }
 
 def targetJavaVersion = 17
