@@ -2,12 +2,7 @@
 
 コマンドとインベントリGUIを用いてユーザーにお知らせを送信することが出来ます
 
-## ⚔ 特徴
-
-- [x] 使いづらく非直感的なGUI
-- [x] 非効率で低速なデータアクセス
-- [x] 信頼性の低く拡張不可能な機能性
-- [x] バージョン1.20以上のみをサポート
+Spigot 1.20
 
 ## 🐄 前提プラグイン
 
@@ -18,12 +13,18 @@
 
 ### 💬 コマンド
 
-| コマンド | 引数 | 説明 | パーミッション |
-| --- | --- | --- | --- |
-| /noticebox add |  | お知らせを作成するための本を取得します | `noticebox.add` |
-| /noticebox remove |  | お知らせを削除するためのGUIを表示します | `noticebox.remove` |
-| /noticebox open |  | お知らせ一覧のGUIを表示します | `noticebox.open` |
-| /noticebox open | `<player>` | `<player>`に対してお知らせ一覧のGUIを表示します | `noticebox.open-other` |
+| コマンド              | 引数         | 説明                             | パーミッション                |
+|-------------------|------------|--------------------------------|------------------------|
+| /noticebox add    |            | お知らせを作成するための本を取得します            | `noticebox.add`        |
+| /noticebox remove |            | お知らせを削除するためのGUIを表示します          | `noticebox.remove`     |
+| /noticebox open   |            | お知らせ一覧のGUIを表示します               | `noticebox.open`       |
+| /noticebox open   | `<player>` | `<player>`に対してお知らせ一覧のGUIを表示します | `noticebox.open-other` |
+
+### 💬 その他のパーミッション
+
+| パーミッション           | 説明                  |
+|-------------------|---------------------|
+| noticebox.viewall | すべてのお知らせが見れるようになります |
 
 ### 👦 お知らせ作成の流れ
 

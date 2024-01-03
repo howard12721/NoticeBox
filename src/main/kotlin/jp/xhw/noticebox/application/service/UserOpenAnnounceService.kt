@@ -1,6 +1,7 @@
 package jp.xhw.noticebox.application.service
 
 import jp.xhw.noticebox.application.dto.RewardDto
+import jp.xhw.noticebox.application.exception.UserNotFoundException
 import jp.xhw.noticebox.application.external.Economy
 import jp.xhw.noticebox.application.external.ItemClaimLogic
 import jp.xhw.noticebox.domain.model.AnnounceId
@@ -18,7 +19,7 @@ class UserOpenAnnounceService(
 ) {
     fun open(userId: UUID, announceId: UUID): RewardDto? {
         return transaction {
-            val opener = userRepository.find(UserId(userId))
+            val opener = userRepository.find(UserId(userId))?: throw UserNotFoundException(userId)
             val announce = announceRepository.findById(AnnounceId(announceId)) ?: return@transaction null
 
             if (opener.isNotOpened(announce)) {
