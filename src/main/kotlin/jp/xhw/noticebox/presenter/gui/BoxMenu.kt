@@ -199,7 +199,7 @@ class BoxMenu private constructor(plugin: NoticeBoxPlugin, menuTitle: String, pr
 
                                 messages.add(Constants.MESSAGE_SEPARATOR)
                                 messages.add("")
-                                if (claimedReward.money > 0.0) messages.add("お金 §6%d§r".format(claimedReward.money))
+                                if (claimedReward.money > 0.0) messages.add("お金 §6%d§r".format(claimedReward.money.toInt()))
                                 if (claimedReward.items.isNotEmpty()) messages.add("アイテム §a%d§r個".format(claimedReward.items.size))
                                 messages.add("")
                                 messages.add(Constants.MESSAGE_SEPARATOR)
