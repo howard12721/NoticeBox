@@ -42,7 +42,7 @@ class CreateAnnounceMenu private constructor(
         this.menu.setCloseAction { _ -> false }
         val filler = ItemStack(Material.BLACK_STAINED_GLASS_PANE)
         filler.itemMeta = filler.itemMeta?.let {
-            it.setDisplayName(" ")
+            it.setDisplayName(Constants.GUI_TEXT_EMPTY)
             it
         }
         this.menu.setFiller(filler)
@@ -54,7 +54,7 @@ class CreateAnnounceMenu private constructor(
                         if (click.type == ClickType.DOUBLE_CLICK) return@label true
                         AnvilGUI.Builder()
                             .plugin(NoticeBoxPlugin.plugin)
-                            .title("§lタイトルを入力")
+                            .title(Constants.ANVIL_TITLE_ENTER_TITLE)
                             .itemLeft(ItemStack(Material.PAPER))
                             .text(announceData.title)
                             .onClick { slot, snapshot ->
@@ -69,8 +69,8 @@ class CreateAnnounceMenu private constructor(
                             .open(click.whoClicked as Player)
                         return@label true
                     },
-                    "§lタイトルを設定",
-                    "§a現在§f: " + announceData.title
+                    Constants.CREATE_ANNOUNCE_BUTTON_SET_TITLE,
+                    Constants.CREATE_ANNOUNCE_LABEL_CURRENT_PREFIX + announceData.title
                 )
             }
         )
@@ -82,17 +82,17 @@ class CreateAnnounceMenu private constructor(
                         if (click.type == ClickType.DOUBLE_CLICK) return@label true
                         AnvilGUI.Builder()
                             .plugin(NoticeBoxPlugin.plugin)
-                            .title("§lタイトルを入力")
+                            .title(Constants.ANVIL_TITLE_ENTER_TITLE)
                             .itemLeft(ItemStack(Material.GOLD_INGOT))
-                            .text("与える金額を入力")
+                            .text(Constants.ANVIL_TEXT_ENTER_MONEY)
                             .onClick { slot, snapshot ->
                                 if (slot != AnvilGUI.Slot.OUTPUT) return@onClick emptyList<ResponseAction>()
                                 try {
                                     announceData.money = snapshot.text.toDouble()
                                 } catch (e: NumberFormatException) {
-                                    return@onClick listOf(ResponseAction.replaceInputText("無効な数値です"))
+                                    return@onClick listOf(ResponseAction.replaceInputText(Constants.ANVIL_TEXT_INVALID_NUMBER))
                                 }
-                                if (announceData.money < 0.0) return@onClick listOf(ResponseAction.replaceInputText("無効な数値です"))
+                                if (announceData.money < 0.0) return@onClick listOf(ResponseAction.replaceInputText(Constants.ANVIL_TEXT_INVALID_NUMBER))
                                 return@onClick listOf(ResponseAction.close())
                             }
                             .onClose { close ->
@@ -102,8 +102,8 @@ class CreateAnnounceMenu private constructor(
                             .open(click.whoClicked as Player)
                         return@label true
                     },
-                    "§l報酬としてお金を与える",
-                    "§a現在§f: " + announceData.money
+                    Constants.CREATE_ANNOUNCE_BUTTON_SET_MONEY,
+                    Constants.CREATE_ANNOUNCE_LABEL_CURRENT_PREFIX + announceData.money
                 )
             }
         )
@@ -113,12 +113,12 @@ class CreateAnnounceMenu private constructor(
                 StaticGuiElement(
                     'I', ItemStack(Material.CHEST), label@{ click ->
                         if (click.type == ClickType.DOUBLE_CLICK) return@label true
-                        ItemStorageMenu.create(plugin, "与えるアイテムを入れてください", announceData, this.menu)
+                        ItemStorageMenu.create(plugin, Constants.ITEM_STORAGE_MENU_TITLE, announceData, this.menu)
                             .show(click.whoClicked as Player)
                         return@label true
                     },
-                    "§l報酬としてアイテムを与える",
-                    "§a現在§f: " + announceData.items.size + "個のアイテム"
+                    Constants.CREATE_ANNOUNCE_BUTTON_SET_ITEMS,
+                    Constants.CREATE_ANNOUNCE_LABEL_CURRENT_PREFIX + announceData.items.size + Constants.CREATE_ANNOUNCE_LABEL_ITEM_COUNT_SUFFIX
                 )
             }
         )
@@ -136,12 +136,12 @@ class CreateAnnounceMenu private constructor(
                             announceData.items.map { itemStack -> itemStack.toByteArray() })
                         (click.whoClicked as Player).let {
                             it.playSound(it.location, Sound.BLOCK_NOTE_BLOCK_PLING, 1.0f, 1.0f)
-                            it.sendMessage(Constants.PREFIX + "お知らせを作成しました")
+                            it.sendMessage(Constants.MESSAGE_ANNOUNCE_CREATED)
                         }
                         this.menu.close()
                         return@label true
                     },
-                    "§l§aお知らせを作成する",
+                    Constants.CREATE_ANNOUNCE_BUTTON_CREATE,
                 )
             }
         )

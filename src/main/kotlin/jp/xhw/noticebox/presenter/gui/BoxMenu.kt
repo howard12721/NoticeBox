@@ -50,7 +50,7 @@ class BoxMenu private constructor(plugin: NoticeBoxPlugin, menuTitle: String, pr
 
         val filler = ItemStack(Material.BLACK_STAINED_GLASS_PANE)
         filler.itemMeta = filler.itemMeta?.let {
-            it.setDisplayName(" ")
+            it.setDisplayName(Constants.GUI_TEXT_EMPTY)
             it
         }
         this.menu.setFiller(filler)
@@ -69,7 +69,7 @@ class BoxMenu private constructor(plugin: NoticeBoxPlugin, menuTitle: String, pr
                     return@DynamicGuiElement StaticGuiElement(
                         'f',
                         ItemStack(Material.BLACK_STAINED_GLASS_PANE),
-                        " "
+                        Constants.GUI_TEXT_EMPTY
                     )
                 }
                 StaticGuiElement(
@@ -82,7 +82,7 @@ class BoxMenu private constructor(plugin: NoticeBoxPlugin, menuTitle: String, pr
                         click.gui.draw()
                         true
                     },
-                    "最初のページへ"
+                    Constants.GUI_BUTTON_FIRST_PAGE
                 )
             }
         )
@@ -95,7 +95,7 @@ class BoxMenu private constructor(plugin: NoticeBoxPlugin, menuTitle: String, pr
                     return@DynamicGuiElement StaticGuiElement(
                         'p',
                         ItemStack(Material.BLACK_STAINED_GLASS_PANE),
-                        " "
+                        Constants.GUI_TEXT_EMPTY
                     )
                 }
                 StaticGuiElement(
@@ -108,7 +108,7 @@ class BoxMenu private constructor(plugin: NoticeBoxPlugin, menuTitle: String, pr
                         click.gui.draw()
                         true
                     },
-                    "前のページへ"
+                    Constants.GUI_BUTTON_PREVIOUS_PAGE
                 )
             }
         )
@@ -121,7 +121,7 @@ class BoxMenu private constructor(plugin: NoticeBoxPlugin, menuTitle: String, pr
                     return@DynamicGuiElement StaticGuiElement(
                         'n',
                         ItemStack(Material.BLACK_STAINED_GLASS_PANE),
-                        " "
+                        Constants.GUI_TEXT_EMPTY
                     )
                 }
                 StaticGuiElement(
@@ -134,7 +134,7 @@ class BoxMenu private constructor(plugin: NoticeBoxPlugin, menuTitle: String, pr
                         click.gui.draw()
                         true
                     },
-                    "次のページへ"
+                    Constants.GUI_BUTTON_NEXT_PAGE
                 )
             }
         )
@@ -147,7 +147,7 @@ class BoxMenu private constructor(plugin: NoticeBoxPlugin, menuTitle: String, pr
                     return@DynamicGuiElement StaticGuiElement(
                         'l',
                         ItemStack(Material.BLACK_STAINED_GLASS_PANE),
-                        " "
+                        Constants.GUI_TEXT_EMPTY
                     )
                 }
                 StaticGuiElement(
@@ -160,7 +160,7 @@ class BoxMenu private constructor(plugin: NoticeBoxPlugin, menuTitle: String, pr
                         click.gui.draw()
                         true
                     },
-                    "最初のページへ"
+                    Constants.GUI_BUTTON_FIRST_PAGE
                 )
             }
         )
@@ -177,7 +177,7 @@ class BoxMenu private constructor(plugin: NoticeBoxPlugin, menuTitle: String, pr
                 return@DynamicGuiElement StaticGuiElement(
                     'A',
                     ItemStack(Material.GRAY_STAINED_GLASS_PANE),
-                    ""
+                    Constants.GUI_TEXT_EMPTY
                 )
             }
             val sample = currentSamples[num]
@@ -198,10 +198,10 @@ class BoxMenu private constructor(plugin: NoticeBoxPlugin, menuTitle: String, pr
                                 val messages = mutableListOf<String>()
 
                                 messages.add(Constants.MESSAGE_SEPARATOR)
-                                messages.add("")
-                                if (claimedReward.money > 0.0) messages.add("お金 §6%d§r".format(claimedReward.money.toInt()))
-                                if (claimedReward.items.isNotEmpty()) messages.add("アイテム §a%d§r個".format(claimedReward.items.size))
-                                messages.add("")
+                                messages.add(Constants.GUI_TEXT_EMPTY)
+                                if (claimedReward.money > 0.0) messages.add(Constants.GUI_MESSAGE_MONEY_REWARD.format(claimedReward.money.toInt()))
+                                if (claimedReward.items.isNotEmpty()) messages.add(Constants.GUI_MESSAGE_ITEM_REWARD.format(claimedReward.items.size))
+                                messages.add(Constants.GUI_TEXT_EMPTY)
                                 messages.add(Constants.MESSAGE_SEPARATOR)
 
                                 for (message in messages) {
@@ -219,7 +219,7 @@ class BoxMenu private constructor(plugin: NoticeBoxPlugin, menuTitle: String, pr
                     } catch (e: UserNotFoundException) {
                         this.menu.close()
                         this.menu.destroy()
-                        player.sendMessage("§c報酬の受け取り中にエラーが発生しました: ユーザーが見つかりませんでした")
+                        player.sendMessage(Constants.GUI_ERROR_REWARD_USER_NOT_FOUND)
                     }
                     true
                 },
@@ -235,16 +235,16 @@ class BoxMenu private constructor(plugin: NoticeBoxPlugin, menuTitle: String, pr
         val bookMeta = itemStack.itemMeta!! as BookMeta
         val announceContentDto =
             FetchAnnounceContentService(NoticeBoxPlugin.plugin.announceRepository).fetch(sample.announceId)
-        bookMeta.pages = announceContentDto?.content?.split(Constants.PAGE_SEPARATOR) ?: listOf("エラー: 内容が見つかりませんでした")
-        bookMeta.setTitle((announceContentDto?.title ?: "不明なお知らせ"))
-        bookMeta.author = "NoticeBox"
+        bookMeta.pages = announceContentDto?.content?.split(Constants.PAGE_SEPARATOR) ?: listOf(Constants.GUI_ERROR_ANNOUNCE_CONTENT_NOT_FOUND)
+        bookMeta.setTitle((announceContentDto?.title ?: Constants.GUI_DEFAULT_ANNOUNCE_TITLE))
+        bookMeta.author = Constants.GUI_BOOK_AUTHOR
         itemStack.itemMeta = bookMeta
         return itemStack
     }
 
     private fun update() {
         try {
-            if (player.hasPermission("noticebox.viewall")) {
+            if (player.hasPermission(Constants.PERMISSION_VIEW_ALL)) {
                 currentSamples = FetchAnnounceSamplesService(NoticeBoxPlugin.plugin.announceRepository).fetch(
                     ANNOUNCES_PER_PAGE * (currentPage - 1),
                     ANNOUNCES_PER_PAGE
@@ -263,11 +263,11 @@ class BoxMenu private constructor(plugin: NoticeBoxPlugin, menuTitle: String, pr
             maxPage = if (numOfAnnounces == 0L) 1L else (numOfAnnounces + ANNOUNCES_PER_PAGE - 1) / ANNOUNCES_PER_PAGE
             readAnnounces = FetchReadAnnouncesService(NoticeBoxPlugin.plugin.userRepository).fetch(player.uniqueId)
 
-            menu.title = "ページ: $currentPage"
+            menu.title = Constants.GUI_PAGE_TITLE_FORMAT.format(currentPage)
         } catch (e: UserNotFoundException) {
             this.menu.close()
             this.menu.destroy()
-            player.sendMessage("§cお知らせの読み込み中にエラーが発生しました: ユーザーが見つかりませんでした")
+            player.sendMessage(Constants.GUI_ERROR_LOAD_ANNOUNCES_USER_NOT_FOUND)
         }
     }
 

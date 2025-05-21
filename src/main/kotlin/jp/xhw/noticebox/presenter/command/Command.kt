@@ -23,42 +23,62 @@ class Command {
                     .executesPlayer(PlayerCommandExecutor { sender, _ ->
                         val writableBook = ItemStack(Material.WRITABLE_BOOK)
                         val itemMeta: ItemMeta = writableBook.itemMeta!!
-                        itemMeta.setDisplayName("§lお知らせの本文を入力")
-                        itemMeta.lore = listOf("§a署名して決定")
-                        itemMeta.persistentDataContainer.set(Constants.BOOK_KEY, PersistentDataType.STRING, "announce")
+                        itemMeta.setDisplayName(Constants.TITLE_ANNOUNCE_BOOK_INPUT)
+                        itemMeta.lore = listOf(Constants.LORE_ANNOUNCE_BOOK_SIGN)
+                        itemMeta.persistentDataContainer.set(Constants.BOOK_KEY, PersistentDataType.STRING, Constants.ANNOUNCE_BOOK_TAG_VALUE)
                         writableBook.itemMeta = itemMeta
                         if (sender.inventory.addItem(writableBook).isNotEmpty()) {
-                            sender.sendMessage("§cインベントリが一杯です")
+                            sender.sendMessage(Constants.MESSAGE_INVENTORY_FULL)
                         }
                     })
-                    .withPermission("noticebox.add")
+                    .withPermission(Constants.PERMISSION_ADD)
             )
             .withSubcommand(
                 CommandAPICommand("remove")
                     .executesPlayer(PlayerCommandExecutor { sender, _ ->
-                        DeleteAnnounceMenu.create(NoticeBoxPlugin.plugin, "削除メニュー").show(sender)
+                        DeleteAnnounceMenu.create(NoticeBoxPlugin.plugin, Constants.MENU_TITLE_DELETE).show(sender)
                     })
-                    .withPermission("noticebox.remove")
+                    .withPermission(Constants.PERMISSION_REMOVE)
             )
             .withSubcommand(
                 CommandAPICommand("open")
                     .withOptionalArguments(PlayerArgument("target"))
                     .executesPlayer(PlayerCommandExecutor { sender, args ->
-                        var target = sender
-                        if (args.count() != 0) {
-                            if (!sender.hasPermission("noticebox.open-other")) return@PlayerCommandExecutor
-                            target = args.get(0) as Player
-                        }
-                        BoxMenu.create(NoticeBoxPlugin.plugin, "お知らせ", target).show(target)
+                        openNoticeBoxLogic(sender, args)
                     })
                     .executes(CommandExecutor { sender, args ->
-                        if (args.count() == 0) return@CommandExecutor
-                        if (!sender.hasPermission("noticebox.open-other")) return@CommandExecutor
-                        val target = args.get(0) as Player
-                        BoxMenu.create(NoticeBoxPlugin.plugin, "お知らせ", target).show(target)
+                        openNoticeBoxLogic(sender, args)
                     })
-                    .withPermission("noticebox.open")
+                    .withPermission(Constants.PERMISSION_OPEN)
             )
             .register()
+    }
+
+    private fun openNoticeBoxLogic(sender: org.bukkit.command.CommandSender, args: dev.jorel.commandapi.executors.CommandArguments) {
+        val targetPlayer: Player?
+
+        if (args.count() == 0) {
+            // No target player specified in arguments
+            if (sender is Player) {
+                targetPlayer = sender
+            } else {
+                // Console or other non-player sender trying to open for self
+                sender.sendMessage(Constants.MESSAGE_SPECIFY_PLAYER_FOR_CONSOLE)
+                return
+            }
+        } else {
+            // Target player is specified in arguments
+            if (!sender.hasPermission(Constants.PERMISSION_OPEN_OTHER)) {
+                sender.sendMessage(Constants.MESSAGE_NO_PERMISSION_OPEN_OTHER)
+                return
+            }
+            targetPlayer = args.get("target") as? Player
+            if (targetPlayer == null) {
+                sender.sendMessage(Constants.MESSAGE_PLAYER_NOT_FOUND)
+                return
+            }
+        }
+
+        BoxMenu.create(NoticeBoxPlugin.plugin, Constants.MENU_TITLE_BOX, targetPlayer).show(targetPlayer)
     }
 }

@@ -45,7 +45,7 @@ class DeleteAnnounceMenu private constructor(plugin: NoticeBoxPlugin, menuTitle:
 
         val filler = ItemStack(Material.BLACK_STAINED_GLASS_PANE)
         filler.itemMeta = filler.itemMeta?.let {
-            it.setDisplayName(" ")
+            it.setDisplayName(Constants.GUI_TEXT_EMPTY)
             it
         }
         this.menu.setFiller(filler)
@@ -64,7 +64,7 @@ class DeleteAnnounceMenu private constructor(plugin: NoticeBoxPlugin, menuTitle:
                     return@DynamicGuiElement StaticGuiElement(
                         'f',
                         ItemStack(Material.BLACK_STAINED_GLASS_PANE),
-                        " "
+                        Constants.GUI_TEXT_EMPTY
                     )
                 }
                 StaticGuiElement(
@@ -77,7 +77,7 @@ class DeleteAnnounceMenu private constructor(plugin: NoticeBoxPlugin, menuTitle:
                         click.gui.draw()
                         true
                     },
-                    "最初のページへ"
+                    Constants.GUI_BUTTON_FIRST_PAGE
                 )
             }
         )
@@ -90,7 +90,7 @@ class DeleteAnnounceMenu private constructor(plugin: NoticeBoxPlugin, menuTitle:
                     return@DynamicGuiElement StaticGuiElement(
                         'p',
                         ItemStack(Material.BLACK_STAINED_GLASS_PANE),
-                        " "
+                        Constants.GUI_TEXT_EMPTY
                     )
                 }
                 StaticGuiElement(
@@ -103,7 +103,7 @@ class DeleteAnnounceMenu private constructor(plugin: NoticeBoxPlugin, menuTitle:
                         click.gui.draw()
                         true
                     },
-                    "前のページへ"
+                    Constants.GUI_BUTTON_PREVIOUS_PAGE
                 )
             }
         )
@@ -116,7 +116,7 @@ class DeleteAnnounceMenu private constructor(plugin: NoticeBoxPlugin, menuTitle:
                     return@DynamicGuiElement StaticGuiElement(
                         'n',
                         ItemStack(Material.BLACK_STAINED_GLASS_PANE),
-                        " "
+                        Constants.GUI_TEXT_EMPTY
                     )
                 }
                 StaticGuiElement(
@@ -129,7 +129,7 @@ class DeleteAnnounceMenu private constructor(plugin: NoticeBoxPlugin, menuTitle:
                         click.gui.draw()
                         true
                     },
-                    "次のページへ"
+                    Constants.GUI_BUTTON_NEXT_PAGE
                 )
             }
         )
@@ -142,7 +142,7 @@ class DeleteAnnounceMenu private constructor(plugin: NoticeBoxPlugin, menuTitle:
                     return@DynamicGuiElement StaticGuiElement(
                         'l',
                         ItemStack(Material.BLACK_STAINED_GLASS_PANE),
-                        " "
+                        Constants.GUI_TEXT_EMPTY
                     )
                 }
                 StaticGuiElement(
@@ -155,7 +155,7 @@ class DeleteAnnounceMenu private constructor(plugin: NoticeBoxPlugin, menuTitle:
                         click.gui.draw()
                         true
                     },
-                    "最初のページへ"
+                    Constants.GUI_BUTTON_FIRST_PAGE
                 )
             }
         )
@@ -172,7 +172,7 @@ class DeleteAnnounceMenu private constructor(plugin: NoticeBoxPlugin, menuTitle:
                 return@DynamicGuiElement StaticGuiElement(
                     'A',
                     ItemStack(Material.GRAY_STAINED_GLASS_PANE),
-                    ""
+                    Constants.GUI_TEXT_EMPTY
                 )
             }
             val sample = currentSamples[num]
@@ -180,7 +180,7 @@ class DeleteAnnounceMenu private constructor(plugin: NoticeBoxPlugin, menuTitle:
                 'A',
                 ItemStack(Material.BOOK),
                 { click ->
-                    DeleteConfirmMenu.create(NoticeBoxPlugin.plugin, "削除を確認", sample, this)
+                    DeleteConfirmMenu.create(NoticeBoxPlugin.plugin, Constants.MENU_TITLE_DELETE_CONFIRM, sample, this)
                         .show(click.whoClicked as Player)
                     true
                 },
@@ -199,7 +199,7 @@ class DeleteAnnounceMenu private constructor(plugin: NoticeBoxPlugin, menuTitle:
         numOfAnnounces = GetNumberOfAnnouncesService(NoticeBoxPlugin.plugin.announceRepository).get()
         maxPage = if (numOfAnnounces == 0L) 1L else (numOfAnnounces + ANNOUNCES_PER_PAGE - 1) / ANNOUNCES_PER_PAGE
 
-        menu.title = "ページ: $currentPage"
+        menu.title = Constants.GUI_PAGE_TITLE_FORMAT.format(currentPage)
     }
 
 }

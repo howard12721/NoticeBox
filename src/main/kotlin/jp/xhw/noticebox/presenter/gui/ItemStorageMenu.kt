@@ -37,7 +37,7 @@ class ItemStorageMenu private constructor(
     }
 
     private var menu: InventoryGui = InventoryGui(plugin, menuTitle, MENU_LAYOUT)
-    private val itemInventory = Bukkit.createInventory(null, InventoryType.CHEST, "ここにアイテムを入れる")
+    private val itemInventory = Bukkit.createInventory(null, InventoryType.CHEST, Constants.ITEM_STORAGE_TEMP_INVENTORY_TITLE)
 
     init {
         announceData.items.forEach { itemStack -> itemInventory.addItem(itemStack) }
@@ -50,7 +50,7 @@ class ItemStorageMenu private constructor(
                     fallback.show(click.whoClicked)
                     true
                 },
-                "§c§l戻る"
+                Constants.ITEM_STORAGE_BUTTON_BACK
             )
         )
         this.menu.setCloseAction { _ -> false }

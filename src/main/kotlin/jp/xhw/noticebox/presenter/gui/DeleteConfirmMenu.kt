@@ -60,12 +60,12 @@ class DeleteConfirmMenu private constructor(
                     DeleteAnnounceService(NoticeBoxPlugin.plugin.announceRepository).delete(sample.announceId)
                     (click.whoClicked as Player).let {
                         it.playSound(it.location, Sound.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR, 1f, 1f)
-                        it.sendMessage(Constants.PREFIX + "お知らせ「${sample.title}」を削除しました")
+                        it.sendMessage(Constants.MESSAGE_ANNOUNCE_DELETED_FORMAT.format(sample.title))
                     }
                     fallback.show(click.whoClicked as Player)
                     true
                 },
-                "§l§c削除する"
+                Constants.DELETE_CONFIRM_BUTTON_DELETE
             )
         )
 
@@ -77,7 +77,7 @@ class DeleteConfirmMenu private constructor(
                     fallback.show(click.whoClicked as Player)
                     true
                 },
-                "§l§cキャンセル"
+                Constants.DELETE_CONFIRM_BUTTON_CANCEL
             )
         )
 

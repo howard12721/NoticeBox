@@ -45,6 +45,17 @@ dependencies {
     implementation "dev.jorel:commandapi-bukkit-shade:9.3.0"
     implementation "de.themoep:inventorygui:1.6.1-SNAPSHOT"
     implementation "net.wesjd:anvilgui:1.9.2-SNAPSHOT"
+
+    // Testing dependencies
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.10.0"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.10.0"
+    testImplementation "com.github.seeseemelk:MockBukkit-v1.20:2.128.0"
+    // Mockito for mocking classes if needed, though MockBukkit might provide enough
+    testImplementation "org.mockito:mockito-core:5.4.0"
+    testImplementation "org.mockito:mockito-junit-jupiter:5.4.0"
+    // If CommandAPI has a specific test artifact, it would be added here.
+    // For now, assume CommandAPI test utilities are part of the main shaded lib or rely on MockBukkit.
+
 }
 
 def targetJavaVersion = 17
@@ -93,4 +104,11 @@ tasks.build.dependsOn tasks.shadowJar
 
 kotlin {
     jvmToolchain(17)
+}
+
+tasks.withType(Test) {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
 }
